@@ -37,6 +37,11 @@ class Number(t.NamedTuple):
             zip(range(self.bits-1, -1, -1), self.number)
         ))
 
+    def switch_sign(self, sign=None):
+        if sign is None:
+            sign = int(not self.sign)
+        return self.__class__(self.number, self.base, self.bits, self.sign)
+
     def rebase(self, new_base=None, new_bits=None):
         new_base = new_base or self.base
         new_bits = new_bits or self.bits
@@ -45,6 +50,9 @@ class Number(t.NamedTuple):
     def __add__(self, other: 'Number'):
         a = self
         b = other
+        
+        if a.sign != b.sign:
+            return a - b.switch_sign() if b.sign else b - a.switch_sign()
         
         # TODO: Implement recoding someday
         assert a.bits == b.bits, 'Cannot add numbers with non-equal coding'
@@ -68,6 +76,11 @@ class Number(t.NamedTuple):
         a = self
         b = other
 
+        sign = 0
+        if int(a) < int(b):  # Shitty hack, but I'm lazy
+            a, b = b, a
+            sign = 1
+
         # TODO: Implement recoding someday
         assert a.bits == b.bits, 'Cannot add numbers with non-equal coding'
         assert a.base == b.base, 'Cannot add numbers with non-equal coding'
@@ -83,7 +96,7 @@ class Number(t.NamedTuple):
             carry_bit = s // base
             result_num[i] = s % base
         
-        return Number(base=base, bits=bits, number=result_num)
+        return Number(base=base, bits=bits, number=result_num, sign=sign)
 
 
 number = Number.parse
