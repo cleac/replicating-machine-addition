@@ -17,6 +17,8 @@ class TestAddition(TestCase):
         result = a + b
         self.assertEqual(int(a_coded + b_coded), result)
 
+
+class TestIsSemigroup(TestCase):
     def test_numbers_addition_commutates(self):
         base = randint(2, 10)
         a = randint(1, 255)
