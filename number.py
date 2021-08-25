@@ -50,15 +50,9 @@ class Number(t.NamedTuple):
         bits = a.bits
 
         for i in range(a.bits -1, -1, -1):
-            result_num[i] = (
-                (a_num[i] & b_num[i] & carry_bit) |
-                ((a_num[i] ^ b_num[i]) ^ carry_bit)
-            )
-            carry_bit = (
-                (a_num[i] & b_num[i]) |
-                (a_num[i] & carry_bit) |
-                (carry_bit & b_num[i])
-            )
+            s = a_num[i] + b_num[i] + carry_bit
+            carry_bit = s // base
+            result_num[i] = s % base
         
         return Number(base=base, bits=bits, number=result_num)
 
