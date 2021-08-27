@@ -39,8 +39,8 @@ class Number(t.NamedTuple):
 
     def switch_sign(self, sign=None):
         if sign is None:
-            sign = int(not self.sign)
-        return self.__class__(self.number, self.base, self.bits, self.sign)
+            sign = 0 if self.sign else 1
+        return self.__class__(self.number, self.base, self.bits, sign)
 
     def rebase(self, new_base=None, new_bits=None):
         new_base = new_base or self.base
@@ -75,6 +75,10 @@ class Number(t.NamedTuple):
     def __sub__(self, other: 'Number'):
         a = self
         b = other
+
+        # FIXME: There is recursion here    
+        if a.sign != b.sign:
+            return a + (b.switch_sign())
 
         sign = 0
         if int(a) < int(b):  # Shitty hack, but I'm lazy
